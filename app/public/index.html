@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MediCare Hospital – HMS</title>
+<style>
+:root{--teal:#0e9aa7;--navy:#0b2447;--bg:#f2f7fa;--card:#fff;--txt:#17324d;--mut:#6b8196;--ok:#1b9c5a;--bad:#d64545}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;color:var(--txt);background:var(--bg)}
+[hidden]{display:none!important}
+/* ---------- animated login ---------- */
+#login{min-height:100vh;display:grid;place-items:center;position:relative;overflow:hidden;background:linear-gradient(120deg,#0b2447,#0e6e8c,#0e9aa7,#19376d);background-size:300% 300%;animation:bg 14s ease infinite}
+@keyframes bg{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.cross{position:absolute;color:rgba(255,255,255,.14);font-weight:900;animation:float linear infinite;user-select:none}
+@keyframes float{from{transform:translateY(110vh) rotate(0)}to{transform:translateY(-20vh) rotate(360deg)}}
+.lcard{position:relative;width:min(400px,92vw);padding:34px 30px;border-radius:20px;background:rgba(255,255,255,.95);box-shadow:0 25px 60px rgba(0,0,0,.35);animation:rise .9s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes rise{from{opacity:0;transform:translateY(40px) scale(.95)}to{opacity:1;transform:none}}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:var(--navy)}
+.logo i{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--teal);color:#fff;font-style:normal;animation:beat 1.2s infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+.ecg{width:100%;height:50px;margin:10px 0 4px}
+.ecg path{fill:none;stroke:var(--teal);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:420;stroke-dashoffset:420;animation:ecg 2.6s linear infinite}
+@keyframes ecg{to{stroke-dashoffset:-420}}
+.lcard label{display:block;font-size:13px;color:var(--mut);margin:14px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid #d5e1ea;border-radius:10px;font:inherit;background:#fff;transition:.2s}
+input:focus,select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 4px rgba(14,154,167,.15)}
+.btn{border:0;border-radius:10px;padding:11px 18px;font:inherit;font-weight:600;cursor:pointer;background:var(--teal);color:#fff;transition:.2s;position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(14,154,167,.35)}
+.btn.sm{padding:5px 10px;font-size:12px}.btn.red{background:var(--bad)}.btn.grey{background:#8aa0b3}
+.lcard .btn{width:100%;margin-top:22px;padding:13px}
+.pw{position:relative}.pw input{padding-right:46px}
+.pw #eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:18px;cursor:pointer;padding:6px 8px;border-radius:8px;opacity:.6;transition:.2s}
+.pw #eye:hover,.pw #eye.on{opacity:1;background:#e3f1f5}
+.lcard label.show{display:flex;align-items:center;gap:8px;margin:10px 0 0;cursor:pointer;user-select:none}
+.lcard label.show input{width:auto;accent-color:var(--teal)}
+.err{color:var(--bad);font-size:13px;min-height:18px;margin-top:10px;animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* ---------- app ---------- */
+#app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+nav{background:var(--navy);color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:6px}
+nav .logo{color:#fff;margin-bottom:18px}
+nav a{padding:11px 14px;border-radius:10px;cursor:pointer;color:#c9d7e6;transition:.2s}
+nav a:hover,nav a.on{background:rgba(255,255,255,.12);color:#fff}
+nav .out{margin-top:auto}
+main{padding:26px 30px;overflow:auto;animation:rise .4s}
+h2{margin:0 0 18px}h3{margin:22px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.stat{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(11,36,71,.06)}
+.stat b{display:block;font-size:28px;color:var(--teal)}.stat span{color:var(--mut);font-size:13px}
+.card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(11,36,71,.06);margin-bottom:18px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;align-items:end}
+.form label{font-size:12px;color:var(--mut);display:block;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase}
+th,td{padding:10px 8px;border-bottom:1px solid #e7eef4}
+.tag{padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;background:#e3f1f5;color:var(--teal)}
+.tag.COMPLETED,.tag.READY,.tag.PAID{background:#dff5e9;color:var(--ok)}.tag.CANCELLED{background:#fde5e5;color:var(--bad)}.tag.PENDING{background:#fff3d6;color:#b07a00}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+@media(max-width:760px){#app{grid-template-columns:1fr}nav{flex-direction:row;flex-wrap:wrap}nav .out{margin:0}}
+</style></head><body>
+
+<div id="login">
+  <div id="crosses"></div>
+  <form class="lcard" id="lf">
+    <div class="logo"><i>+</i> MediCare Hospital</div>
+    <svg class="ecg" viewBox="0 0 400 50"><path d="M0 28 H110 L125 28 L135 8 L148 46 L160 18 L170 28 H260 L275 28 L285 8 L298 46 L310 18 L320 28 H400"/></svg>
+    <div style="color:var(--mut);font-size:14px">Hospital Management System · Staff sign in</div>
+    <label>Username</label><input id="u" autocomplete="username" autofocus>
+    <label>Password</label>
+    <div class="pw"><input id="p" type="password" autocomplete="current-password"><button type="button" id="eye" aria-label="Show password" title="Show password">👁</button></div>
+    <label class="show"><input type="checkbox" id="sp"> Show password</label>
+    <div class="err" id="le"></div>
+    <button class="btn">Sign in</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <nav>
+    <div class="logo"><i style="display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--teal)">+</i> MediCare</div>
+    <a data-v="dash">📊 Dashboard</a><a data-v="pat">🧑 Patients</a><a data-v="apt">📅 Appointments</a>
+    <a data-v="lab">🧪 Lab & Results</a><a data-v="bill">💳 Billing</a>
+    <a class="out" id="out">⎋ Logout</a>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);let T=localStorage.getItem('t');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+async function api(p,m='GET',b){
+  const r=await fetch('/api'+p,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+T},body:b?JSON.stringify(b):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401&&p!=='/login'){logout();throw new Error('Session expired')}
+  if(!r.ok)throw new Error(j.error||'Error');return j}
+// floating crosses
+for(let i=0;i<22;i++){const c=document.createElement('span');c.className='cross';c.textContent='+';
+  c.style.cssText=`left:${Math.random()*100}%;font-size:${16+Math.random()*50}px;animation-duration:${9+Math.random()*14}s;animation-delay:-${Math.random()*20}s`;$('#crosses').append(c)}
+$('#lf').onsubmit=async e=>{e.preventDefault();$('#le').textContent='';
+  try{const r=await api('/login','POST',{username:$('#u').value.trim(),password:$('#p').value});T=r.token;localStorage.setItem('t',T);start()}
+  catch(x){$('#le').textContent=x.message;$('#le').style.animation='none';void $('#le').offsetWidth;$('#le').style.animation=''}};
+function showPw(on){$('#p').type=on?'text':'password';$('#sp').checked=on;$('#eye').classList.toggle('on',on);$('#eye').title=on?'Hide password':'Show password'}
+$('#eye').onclick=()=>showPw($('#p').type==='password');
+$('#sp').onchange=e=>showPw(e.target.checked);
+function logout(){showPw(false);$('#p').value='';localStorage.removeItem('t');T=null;$('#app').hidden=true;$('#login').hidden=false}
+$('#out').onclick=logout;
+function start(){$('#login').hidden=true;$('#app').hidden=false;go('dash')}
+document.querySelectorAll('nav a[data-v]').forEach(a=>a.onclick=()=>go(a.dataset.v));
+async function go(v){document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  const m=$('#main');m.style.animation='none';void m.offsetWidth;m.style.animation='';
+  try{await views[v](m)}catch(e){m.innerHTML='<div class="card">'+esc(e.message)+'</div>'}}
+const tbl=(h,rows)=>`<table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.join('')||`<tr><td colspan=${h.length} style="color:var(--mut)">No records yet</td></tr>`}</table>`;
+const opts=(a,f)=>a.map(x=>`<option value="${x.id}">${esc(f(x))}</option>`).join('');
+const inr=n=>'₹'+Number(n).toLocaleString('en-IN');
+function submit(id,fn){$(id).onsubmit=async e=>{e.preventDefault();try{await fn(Object.fromEntries(new FormData(e.target)))}catch(x){alert(x.message)}}}
+
+const views={
+async dash(m){const d=await api('/dashboard'),a=await api('/appointments?filter=today');
+  m.innerHTML=`<h2>Dashboard</h2><div class="grid">
+  <div class="stat"><b>${d.patients}</b><span>Registered patients</span></div>
+  <div class="stat"><b>${d.today_appointments}</b><span>Today's appointments</span></div>
+  <div class="stat"><b>${d.surgeries}</b><span>Upcoming surgeries</span></div>
+  <div class="stat"><b>${d.pending_labs}</b><span>Pending lab tests</span></div>
+  <div class="stat"><b>${inr(d.revenue_today)}</b><span>Today's collection</span></div></div>
+  <h3>Today's appointments</h3><div class="card">${tbl(['Time','Patient','Doctor','Type','Status'],a.map(x=>`<tr><td>${x.time}</td><td>${esc(x.patient)}</td><td>${esc(x.doctor)}</td><td>${x.type.replace('_',' ')}</td><td><span class="tag ${x.status}">${x.status}</span></td></tr>`))}</div>
+  <h3>Collection by payment mode</h3><div class="card">${tbl(['Mode','Total'],d.by_method.map(x=>`<tr><td>${x.method}</td><td>${inr(x.total)}</td></tr>`))}</div>`},
+
+async pat(m){const p=await api('/patients');
+  m.innerHTML=`<h2>Patients</h2><div class="card"><form id="f" class="form">
+  <div><label>Name</label><input name="name" required></div><div><label>Age</label><input name="age" type="number" min="0"></div>
+  <div><label>Gender</label><select name="gender"><option>Male</option><option>Female</option><option>Other</option></select></div>
+  <div><label>Phone</label><input name="phone"></div><button class="btn">Register</button></form></div>
+  <div class="card">${tbl(['ID','Name','Age','Gender','Phone'],p.map(x=>`<tr><td>#${x.id}</td><td>${esc(x.name)}</td><td>${x.age??''}</td><td>${x.gender}</td><td>${esc(x.phone)}</td></tr>`))}</div>`;
+  submit('#f',async b=>{await api('/patients','POST',b);go('pat')})},
+
+async apt(m,filter=''){const [p,d,a]=await Promise.all([api('/patients'),api('/doctors'),api('/appointments'+(filter?'?filter='+filter:''))]);
+  m.innerHTML=`<h2>Appointments</h2><div class="card"><form id="f" class="form">
+  <div><label>Patient</label><select name="patient_id" required>${opts(p,x=>'#'+x.id+' '+x.name)}</select></div>
+  <div><label>Type</label><select name="type" id="ty"><option value="OPD">OPD / Doctor consultation</option><option value="SPECIAL_SURGERY">Special surgeon (surgery)</option><option value="DAILY">Daily / follow-up visit</option></select></div>
+  <div><label>Doctor</label><select name="doctor_id" id="doc" required></select></div>
+  <div><label>Date</label><input type="date" name="date" value="${today()}" required></div>
+  <div><label>Time</label><input type="time" name="time" required></div>
+  <div><label>Notes</label><input name="notes"></div><button class="btn">Book</button></form></div>
+  <div class="tabs"><button class="btn sm ${filter?'grey':''}" id="t0">All</button><button class="btn sm ${filter=='today'?'':'grey'}" id="t1">Today (daily)</button><button class="btn sm ${filter=='surgery'?'':'grey'}" id="t2">Special surgery</button></div>
+  <div class="card">${tbl(['Date','Time','Patient','Doctor','Type','Status',''],a.map(x=>`<tr><td>${x.date}</td><td>${x.time}</td><td>${esc(x.patient)}</td><td>${esc(x.doctor)}<br><small style="color:var(--mut)">${esc(x.specialty)}</small></td><td>${x.type.replace('_',' ')}</td><td><span class="tag ${x.status}">${x.status}</span></td>
+  <td>${x.status=='SCHEDULED'?`<button class="btn sm" data-s="COMPLETED" data-i="${x.id}">Done</button> <button class="btn sm red" data-s="CANCELLED" data-i="${x.id}">Cancel</button>`:''}</td></tr>`))}</div>`;
+  const fill=()=>{const s=$('#ty').value=='SPECIAL_SURGERY';$('#doc').innerHTML=opts(d.filter(x=>!s||x.is_surgeon),x=>`${x.name} – ${x.specialty} (${inr(x.fee)})`)};
+  $('#ty').onchange=fill;fill();
+  $('#t0').onclick=()=>views.apt(m,'');$('#t1').onclick=()=>views.apt(m,'today');$('#t2').onclick=()=>views.apt(m,'surgery');
+  m.querySelectorAll('[data-s]').forEach(b=>b.onclick=async()=>{await api('/appointments/'+b.dataset.i,'PATCH',{status:b.dataset.s});views.apt(m,filter)});
+  submit('#f',async b=>{await api('/appointments','POST',b);views.apt(m,filter)})},
+
+async lab(m){const [p,t,o]=await Promise.all([api('/patients'),api('/lab/tests'),api('/lab/orders')]);
+  m.innerHTML=`<h2>Laboratory & Test Results</h2><div class="card"><form id="f" class="form">
+  <div><label>Patient</label><select name="patient_id" required>${opts(p,x=>'#'+x.id+' '+x.name)}</select></div>
+  <div><label>Test</label><select name="test_id">${opts(t,x=>`${x.name} (${inr(x.price)})`)}</select></div><button class="btn">Order test</button></form></div>
+  <div class="card">${tbl(['#','Patient','Test','Status','Result',''],o.map(x=>`<tr><td>${x.id}</td><td>${esc(x.patient)}</td><td>${esc(x.test)}</td><td><span class="tag ${x.status}">${x.status}</span></td><td>${esc(x.result||'—')}</td>
+  <td>${x.status=='PENDING'?`<button class="btn sm" data-i="${x.id}">Enter result</button>`:''}</td></tr>`))}</div>`;
+  m.querySelectorAll('button[data-i]').forEach(b=>b.onclick=async()=>{const r=prompt('Enter test result');if(r){await api('/lab/orders/'+b.dataset.i,'PATCH',{result:r});go('lab')}});
+  submit('#f',async b=>{await api('/lab/orders','POST',b);go('lab')})},
+
+async bill(m){const [p,b]=await Promise.all([api('/patients'),api('/bills')]);
+  m.innerHTML=`<h2>Billing</h2><div class="card"><form id="f" class="form">
+  <div><label>Patient</label><select name="patient_id" required>${opts(p,x=>'#'+x.id+' '+x.name)}</select></div>
+  <div><label>Description</label><input name="description" placeholder="Consultation, lab, surgery…"></div>
+  <div><label>Amount (₹)</label><input name="amount" type="number" min="1" step="0.01" required></div>
+  <div><label>Payment mode</label><select name="method" id="pm"><option>CASH</option><option>UPI</option><option>CARD</option></select></div>
+  <div id="rw" hidden><label id="rl"></label><input name="reference" id="rf"></div><button class="btn">Collect payment</button></form></div>
+  <div class="card">${tbl(['Bill','Patient','Description','Amount','Mode','Ref','Date'],b.map(x=>`<tr><td>#${x.id}</td><td>${esc(x.patient)}</td><td>${esc(x.description)}</td><td>${inr(x.amount)}</td><td>${x.method}</td><td>${esc(x.reference)}</td><td>${x.created_at.slice(0,16)}</td></tr>`))}</div>`;
+  $('#pm').onchange=()=>{const v=$('#pm').value;$('#rw').hidden=v=='CASH';$('#rl').textContent=v=='UPI'?'UPI transaction ID':'Card last 4 digits';$('#rf').placeholder=v=='UPI'?'e.g. 4123xxxxxx':'1234'};
+  submit('#f',async x=>{x.amount=+x.amount;if(x.method=='CASH')delete x.reference;await api('/bills','POST',x);go('bill')})}
+};
+if(T)start();
+</script></body></html>

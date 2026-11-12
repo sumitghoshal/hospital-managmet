@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hms
+  namespace: hms
+spec:
+  replicas: 1            # SQLite + single EBS volume => 1 replica. Move to RDS to scale out.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: { app: hms }
+  template:
+    metadata:
+      labels: { app: hms }
+    spec:
+      serviceAccountName: hms-app
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: hms
+          image: ACCOUNT_ID.dkr.ecr.ap-southeast-2.amazonaws.com/hms:latest   # replaced by CI
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_PATH
+              value: /data/hms.db
+          readinessProbe:
+            httpGet: { path: /healthz, port: 3000 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /healthz, port: 3000 }
+            initialDelaySeconds: 15
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 512Mi }
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: hms-data
